@@ -6,6 +6,6 @@ test
    :maxdepth: 2
 
 
-   example/index.rst
    nested/index.rst
+   example/index.rst
    test_adder.rst

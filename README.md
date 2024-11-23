@@ -20,7 +20,7 @@ pip install hledger_preprocessor
 Then run:
 
 ```sh
-python -m src.hledger_preprocessor
+python -m hledger_preprocessor
 ```
 
 ## Tests
@@ -73,6 +73,7 @@ Then build the documentation with::
 
 ```sh
 cd docs
+pip install -r requirements.txt
 make html
 ```
 
