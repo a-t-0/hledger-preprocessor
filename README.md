@@ -1,13 +1,14 @@
-# Python Repository Template
+# Hledger .csv bank statement preprocessor for hledger-flow
 
 [![Python 3.12][python_badge]](https://www.python.org/downloads/release/python-3120/)
 [![License: AGPL v3][agpl3_badge]](https://www.gnu.org/licenses/agpl-3.0)
 [![Code Style: Black][black_badge]](https://github.com/ambv/black)
 
-Example Python repository to quickly fork into new clean environment.
+Pre-processes bank `.csv` files so that hledger-flow can convert them into
+`hledger` journals.
 
-- typechecking
-- pre-commit
+Aims to support ((separate) pure logic based & AI-based) auto-transaction
+classification.
 
 ## Usage
 
