@@ -4,7 +4,7 @@
 adder Module
 ============
 
-.. automodule:: pythontemplate.adder
+.. automodule:: hledger_preprocessor.adder
    :members:
    :undoc-members:
    :show-inheritance:

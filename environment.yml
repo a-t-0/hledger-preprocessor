@@ -6,7 +6,7 @@
 # If you change this file, run: conda env update --file environment.yml
 
 # Conda configuration settings. (Specify which modules/packages are installed.)
-name: pythontemplate
+name: hledger_preprocessor
 channels:
   - conda-forge
 dependencies:
@@ -50,7 +50,7 @@ dependencies:
 # Auto generate docstrings.
   - pyment
 # Auto check programming style aspects.
-  - pylint
+#  - pylint # Conda installs pylint v>2.16 whereas python 3.12 needs pip's pylint v>3.3
 # Support Sphinx documentation.
   - sphinx
 # Support some advanced option for Sphinx documentation.

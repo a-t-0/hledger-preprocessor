@@ -6,4 +6,4 @@ src
    :maxdepth: 2
 
 
-   pythontemplate/index.rst
+   hledger_preprocessor/index.rst

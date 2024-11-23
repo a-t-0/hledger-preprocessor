@@ -1,5 +1,5 @@
 
-pythontemplate
+hledger_preprocessor
 ==============
 
 .. toctree::

@@ -2,7 +2,7 @@
 
 import unittest
 
-from pythontemplate.adder import add_two
+from hledger_preprocessor.adder import add_two
 from typeguard import typechecked
 
 
