@@ -8,7 +8,7 @@ from typing import Dict, List, Union
 
 from typeguard import typechecked
 
-from src.hledger_preprocessor.helper import parse_date
+from hledger_preprocessor.helper import parse_date
 
 
 @typechecked

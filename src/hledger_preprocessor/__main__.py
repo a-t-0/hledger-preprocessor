@@ -6,16 +6,14 @@ from typing import Dict, List
 
 from typeguard import typechecked
 
-from src.hledger_preprocessor.arg_parser import create_arg_parser
-from src.hledger_preprocessor.dir_reading_and_writing import (
-    generate_output_path,
-)
-from src.hledger_preprocessor.file_reading_and_writing import (
+from hledger_preprocessor.arg_parser import create_arg_parser
+from hledger_preprocessor.dir_reading_and_writing import generate_output_path
+from hledger_preprocessor.file_reading_and_writing import (
     convert_input_csv_encoding,
     detect_file_encoding,
     write_to_file,
 )
-from src.hledger_preprocessor.triodos_logic import (
+from hledger_preprocessor.triodos_logic import (
     TriodosRules,
     TriodosTransaction,
     parse_tridos_transaction,
@@ -118,5 +116,5 @@ def main() -> None:
         )
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

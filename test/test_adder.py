@@ -2,8 +2,9 @@
 
 import unittest
 
-from hledger_preprocessor.adder import add_two
 from typeguard import typechecked
+
+from hledger_preprocessor.adder import add_two
 
 
 class Test_adder_test(unittest.TestCase):
