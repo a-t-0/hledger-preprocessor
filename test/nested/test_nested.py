@@ -2,9 +2,8 @@
 
 import unittest
 
-from typeguard import typechecked
-
 from pythontemplate.adder import add_two
+from typeguard import typechecked
 
 
 class Test_adder_nested(unittest.TestCase):
