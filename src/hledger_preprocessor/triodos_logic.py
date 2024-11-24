@@ -1,7 +1,6 @@
 """Contains the logic for preprocessing Triodos .csv files to prepare them for
 hledger."""
 
-import csv
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Dict, List, Union
@@ -11,20 +10,23 @@ from typeguard import typechecked
 from hledger_preprocessor.helper import parse_date
 
 
-@typechecked
-def get_triodos_fields() -> List[str]:
-    return [
-        "nr_in_batch",
-        "date",
-        "account0",
-        "amount0",
-        "transaction_code",
-        "other_party",
-        "account1",
-        "BIC",
-        "description",
-        "balance0",
-    ]
+class TriodosParserSettings:
+    def get_field_names(self) -> List[str]:
+        return [
+            "nr_in_batch",
+            "date",
+            "account0",
+            "amount0",
+            "transaction_code",
+            "other_party",
+            "account1",
+            "BIC",
+            "description",
+            "balance0",
+        ]
+
+    def uses_header(self) -> bool:
+        return True
 
 
 @dataclass
@@ -57,65 +59,6 @@ class TriodosTransaction:
 
     def get_year(self) -> int:
         return int(self.the_date.strftime("%Y"))
-
-
-@dataclass
-class TriodosRules:
-    nr_of_header_lines: int
-    currency: str
-    account_holder: str
-    bank_name: str
-    account_type: str
-    status: str
-
-    @typechecked
-    def create_rulecontent(self) -> str:
-        content = ""
-        # Write skip rule
-        content += (
-            "# If your `.csv` file contains a header row, you skip 1 row, if"
-            " it does not have a header row, skip 0 rows.\n"
-        )
-        content += f"skip {self.nr_of_header_lines}\n\n"
-
-        # Write fields
-        content += f"fields {', '.join(get_triodos_fields())}\n\n"
-
-        # Write currency
-        content += f"currency {self.currency}\n"
-
-        # Write status
-        content += f"status {self.status}\n\n"
-
-        # Write account1 and description format
-        content += (
-            "account1"
-            " Assets:current:"
-            f"{self.account_holder}:{self.bank_name}:{self.account_type}\n"
-        )
-
-        # TODO: include tag/category in this perhaps.
-        # Original: description %desc1/%desc2/%desc3
-        content += "description %desc1"
-        return content
-
-
-@typechecked
-def write_processed_csv(
-    transactions: List[TriodosTransaction], file_name: str
-) -> None:
-    # Get fieldnames dynamically from the first object in the list
-    if transactions:
-        fieldnames = transactions[0].to_dict().keys()
-
-        with open(file_name, mode="w", encoding="utf-8", newline="") as outfile:
-            # writer = csv.writer(outfile)
-            writer = csv.DictWriter(outfile, fieldnames=fieldnames)
-            writer.writeheader()
-
-            # Write each transaction as a row in the CSV
-            for txn in transactions:
-                writer.writerow(txn.to_dict())
 
 
 @typechecked

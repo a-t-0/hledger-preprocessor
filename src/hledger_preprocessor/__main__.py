@@ -13,17 +13,35 @@ from hledger_preprocessor.file_reading_and_writing import (
     detect_file_encoding,
     write_to_file,
 )
+from hledger_preprocessor.generate_rules_content import RulesContentCreator
+from hledger_preprocessor.parser_logic_structure import Transaction
 from hledger_preprocessor.triodos_logic import (
-    TriodosRules,
-    TriodosTransaction,
+    TriodosParserSettings,
     parse_tridos_transaction,
-    write_processed_csv,
 )
 
 
 @typechecked
-def process_transactions(rows: List[List[str]]) -> List[TriodosTransaction]:
-    transactions: List[TriodosTransaction] = []
+def write_processed_csv(
+    transactions: List[Transaction], file_name: str
+) -> None:
+    # Get fieldnames dynamically from the first object in the list
+    if transactions:
+        fieldnames = transactions[0].to_dict().keys()
+
+        with open(file_name, mode="w", encoding="utf-8", newline="") as outfile:
+            # writer = csv.writer(outfile)
+            writer = csv.DictWriter(outfile, fieldnames=fieldnames)
+            writer.writeheader()
+
+            # Write each transaction as a row in the CSV
+            for txn in transactions:
+                writer.writerow(txn.to_dict())
+
+
+@typechecked
+def process_transactions(rows: List[List[str]]) -> List[Transaction]:
+    transactions: List[Transaction] = []
     for index, row in enumerate(
         reversed(rows), start=1
     ):  # Process rows from bottom to top
@@ -35,7 +53,7 @@ def process_transactions(rows: List[List[str]]) -> List[TriodosTransaction]:
 @typechecked
 def parse_encoded_input_csv(
     input_csv_filepath: str,
-) -> List[TriodosTransaction]:
+) -> List[Transaction]:
     updated_encoding = detect_file_encoding(input_csv_filepath)
     with open(
         input_csv_filepath,
@@ -50,14 +68,14 @@ def parse_encoded_input_csv(
 
 
 @typechecked
-def get_years(*, transactions: List[TriodosTransaction]) -> List[int]:
+def get_years(*, transactions: List[Transaction]) -> List[int]:
     years: List[int] = [transaction.get_year() for transaction in transactions]
     return years
 
 
 def sort_transactions_on_years(
-    *, transactions: List[TriodosTransaction]
-) -> Dict[int, List[TriodosTransaction]]:
+    *, transactions: List[Transaction]
+) -> Dict[int, List[Transaction]]:
     years = get_years(transactions=transactions)
     return {
         year: [t for t in transactions if t.get_year() == year]
@@ -75,8 +93,9 @@ def main() -> None:
     args = parser.parse_args()
 
     # Generate rules file.
-    triodosRules: TriodosRules = TriodosRules(
-        nr_of_header_lines=1,  # TODO: get from Triodos logic.
+    triodosParserSettings: TriodosParserSettings = TriodosParserSettings()
+    triodosRules: RulesContentCreator = RulesContentCreator(
+        parserSettings=triodosParserSettings,
         currency="EUR",
         account_holder=args.account_holder,
         bank_name=args.bank,
@@ -92,10 +111,10 @@ def main() -> None:
     convert_input_csv_encoding(
         input_csv_filepath=args.input_file, output_encoding=csv_encoding
     )
-    total_transactions: List[TriodosTransaction] = parse_encoded_input_csv(
+    total_transactions: List[Transaction] = parse_encoded_input_csv(
         input_csv_filepath=args.input_file
     )
-    transactions_per_year: Dict[int, List[TriodosTransaction]] = (
+    transactions_per_year: Dict[int, List[Transaction]] = (
         sort_transactions_on_years(transactions=total_transactions)
     )
 
