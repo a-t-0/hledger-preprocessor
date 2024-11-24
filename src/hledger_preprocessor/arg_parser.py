@@ -15,7 +15,7 @@ def create_arg_parser() -> argparse.ArgumentParser:
         "-a",
         "--account-holder",
         type=str,
-        required=True,
+        required=False,
         help="Name of account holder.",
     )
     parser.add_argument(
@@ -26,12 +26,18 @@ def create_arg_parser() -> argparse.ArgumentParser:
         "-i",
         "--input-file",
         type=str,
-        required=True,
+        required=False,
         help="Path to the input CSV file containing Triodos bank data.",
     )
     parser.add_argument(
-        "-r",
-        "--root-path",
+        "-g",
+        "--generate-rules",
+        action="store_true",
+        help="Generates the .rules file for hledger flow imports.",
+    )
+    parser.add_argument(
+        "-s",
+        "--start-path",
         type=str,
         required=True,
         help="Path to root of this repo.",
@@ -40,14 +46,14 @@ def create_arg_parser() -> argparse.ArgumentParser:
         "-p",
         "--pre-processed-output-dir",
         type=str,
-        required=True,
+        required=False,
         help="The dir name containing the pre-processed csv files..",
     )
     parser.add_argument(
         "-t",
         "--account-type",
         type=str,
-        required=True,
+        required=False,
         help="Account type, e.g. checkings/savings etc..",
     )
 

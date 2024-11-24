@@ -2,6 +2,7 @@
 
 import csv
 import os
+from argparse import Namespace
 from typing import Dict, List
 
 from typeguard import typechecked
@@ -84,28 +85,9 @@ def sort_transactions_on_years(
 
 
 @typechecked
-def main() -> None:
+def pre_process_csvs(*, args: Namespace) -> None:
     # Hardcoded parameters.
     csv_encoding: str = "utf-8"
-
-    # Parse input arguments
-    parser = create_arg_parser()
-    args = parser.parse_args()
-
-    # Generate rules file.
-    triodosParserSettings: TriodosParserSettings = TriodosParserSettings()
-    triodosRules: RulesContentCreator = RulesContentCreator(
-        parserSettings=triodosParserSettings,
-        currency="EUR",
-        account_holder=args.account_holder,
-        bank_name=args.bank,
-        account_type=args.account_type,
-        status="*",  # TODO: get from Triodos logic.
-    )
-    write_to_file(
-        content=triodosRules.create_rulecontent(),
-        file_name=f"{args.root_path}/import/{args.bank}.rules",
-    )
 
     # Convert the input csv file encoding.
     convert_input_csv_encoding(
@@ -121,7 +103,7 @@ def main() -> None:
     # Output the pre-processed .csv files per year.
     for year, transactions in transactions_per_year.items():
         output_filepath: str = generate_output_path(
-            root_path=args.root_path,
+            root_path=args.start_path,
             account_holder=args.account_holder,
             bank=args.bank,
             account_type=args.account_type,
@@ -135,5 +117,33 @@ def main() -> None:
         )
 
 
-# if __name__ == "__main__":
-#     main()
+@typechecked
+def generate_rules_file(*, args: Namespace):
+    # Generate rules file.
+    triodosParserSettings: TriodosParserSettings = TriodosParserSettings()
+    triodosRules: RulesContentCreator = RulesContentCreator(
+        parserSettings=triodosParserSettings,
+        currency="EUR",
+        account_holder=args.account_holder,
+        bank_name=args.bank,
+        account_type=args.account_type,
+        status="*",  # TODO: get from Triodos logic.
+    )
+    write_to_file(
+        content=triodosRules.create_rulecontent(),
+        file_name=f"{args.start_path}/import/{args.bank}.rules",
+    )
+
+
+@typechecked
+def main() -> None:
+
+    # Parse input arguments
+    parser = create_arg_parser()
+    args = parser.parse_args()
+
+    # TODO: determine which bank is used and get logic accordingly.
+    if args.generate_rules:
+        generate_rules_file(args=args)
+    if args.pre_processed_output_dir:
+        pre_process_csvs(args=args)

@@ -83,11 +83,13 @@ def parse_tridos_transaction(
         nr_in_batch=nr_in_batch,
         the_date=parse_date(date_string),
         account0=account0,
-        amount0=float(amount0),
+        # amount0 = float(amount0.replace(',', '.')),
+        amount0=float(amount0.replace(".", "").replace(",", ".")),
         transaction_code=transaction_code,
         other_party_name=other_party_name,
         account1=account1,
         BIC=BIC,
         description=description,
-        balance0=float(balance0),
+        # balance0 = float(balance0.replace(',', '.'))
+        balance0=float(balance0.replace(".", "").replace(",", ".")),
     )
