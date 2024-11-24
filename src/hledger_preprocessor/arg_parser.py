@@ -15,7 +15,7 @@ def create_arg_parser() -> argparse.ArgumentParser:
         "-a",
         "--account-holder",
         type=str,
-        required=False,
+        required=True,
         help="Name of account holder.",
     )
     parser.add_argument(

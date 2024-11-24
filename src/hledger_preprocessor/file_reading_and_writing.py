@@ -1,5 +1,7 @@
 """Handles file reading and writing."""
 
+import os
+
 import chardet
 from typeguard import typechecked
 
@@ -8,6 +10,11 @@ from typeguard import typechecked
 def write_to_file(*, content: str, file_name: str) -> None:
     with open(file_name, mode="w", encoding="utf-8") as file:
         file.write(content)
+
+
+def assert_file_exists(*, filepath: str) -> None:
+    if not os.path.isfile(filepath):
+        raise FileNotFoundError(f"File does not exist: {filepath}")
 
 
 @typechecked

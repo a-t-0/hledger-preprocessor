@@ -8,8 +8,12 @@ from typing import Dict, List
 from typeguard import typechecked
 
 from hledger_preprocessor.arg_parser import create_arg_parser
-from hledger_preprocessor.dir_reading_and_writing import generate_output_path
+from hledger_preprocessor.dir_reading_and_writing import (
+    assert_dir_exists,
+    generate_output_path,
+)
 from hledger_preprocessor.file_reading_and_writing import (
+    assert_file_exists,
     convert_input_csv_encoding,
     detect_file_encoding,
     write_to_file,
@@ -118,7 +122,15 @@ def pre_process_csvs(*, args: Namespace) -> None:
 
 
 @typechecked
-def generate_rules_file(*, args: Namespace):
+def generate_rules_file(*, args: Namespace) -> None:
+    if args.bank is None or args.bank == "":
+        raise ValueError("Must specify bank.")
+    if args.account_holder is None or args.account_holder == "":
+        raise ValueError("Must specify account_holder.")
+
+    if args.account_type is None or args.account_type == "":
+        raise ValueError("Must specify account_type.")
+
     # Generate rules file.
     triodosParserSettings: TriodosParserSettings = TriodosParserSettings()
     triodosRules: RulesContentCreator = RulesContentCreator(
@@ -129,10 +141,20 @@ def generate_rules_file(*, args: Namespace):
         account_type=args.account_type,
         status="*",  # TODO: get from Triodos logic.
     )
+
+    rules_output_dir: str = (
+        f"{args.start_path}/import/{args.account_holder}/{args.bank}/"
+        + f"{args.account_type}"
+    )
+    rules_filepath = f"{rules_output_dir}/{args.bank}-{args.account_type}.rules"
+
+    assert_dir_exists(dirpath=rules_output_dir)
+
     write_to_file(
         content=triodosRules.create_rulecontent(),
-        file_name=f"{args.start_path}/import/{args.bank}.rules",
+        file_name=rules_filepath,
     )
+    assert_file_exists(filepath=rules_filepath)
 
 
 @typechecked
@@ -141,6 +163,9 @@ def main() -> None:
     # Parse input arguments
     parser = create_arg_parser()
     args = parser.parse_args()
+
+    if not args.generate_rules and args.pre_processed_output_dir is None:
+        raise ValueError("Must either create rules or preprocess csvs.")
 
     # TODO: determine which bank is used and get logic accordingly.
     if args.generate_rules:

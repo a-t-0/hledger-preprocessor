@@ -21,7 +21,18 @@ pip install hledger_preprocessor
 Then run:
 
 ```sh
-python -m hledger_preprocessor
+clear && hledger_preprocessor --start-path ~/hledger-flow-example \
+--generate-rules \
+--account-holder your_name \
+--bank triodos \
+--account-type checking
+
+clear && hledger_preprocessor --input-file some.csv \
+--start-path ~/hledger-flow-example \
+--account-holder your_name \
+--bank triodos \
+--account-type checking_or_saving_or_something \
+--pre-processed-output-dir=2-preprocessed
 ```
 
 ## Tests
