@@ -50,5 +50,5 @@ class RulesContentCreator:
 
         # TODO: include tag/category in this perhaps.
         # Original: description %desc1/%desc2/%desc3
-        content += "description %desc1"
+        content += "description %description"
         return content
