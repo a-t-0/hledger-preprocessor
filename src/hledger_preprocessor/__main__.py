@@ -115,7 +115,6 @@ def pre_process_csvs(*, args: Namespace) -> None:
             year=year,
             input_filename=os.path.basename(args.input_file),
         )
-        print(f"output_filepath={output_filepath}")
         write_processed_csv(
             transactions=transactions, file_name=output_filepath
         )
