@@ -33,10 +33,12 @@ def write_processed_csv(
     # Get fieldnames dynamically from the first object in the list
     if transactions:
         fieldnames = transactions[0].to_dict().keys()
+        # TODO: change to ensure the fields are not sorted by the .keys() function.
+        print(f'fieldnames={fieldnames}')
 
         with open(file_name, mode="w", encoding="utf-8", newline="") as outfile:
             # writer = csv.writer(outfile)
-            writer = csv.DictWriter(outfile, fieldnames=fieldnames)
+            writer = csv.DictWriter(outfile, fieldnames=fieldnames,quoting=csv.QUOTE_ALL)
             writer.writeheader()
 
             # Write each transaction as a row in the CSV

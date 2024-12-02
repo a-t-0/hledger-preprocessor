@@ -31,12 +31,18 @@ class RulesContentCreator:
             content += "skip 0\n\n"
 
         # Write fields
+        # content += (
+        #     f"fields {', '.join(self.parserSettings.get_field_names())}\n\n"
+        # )
         content += (
-            f"fields {', '.join(self.parserSettings.get_field_names())}\n\n"
+            # f"fields _, date, account0, amount0, _, _, _, _, description, balance0\n"
+            f"fields _, date, account, amount, _, _, _, _, description, balance\n"
         )
 
         # Write currency
-        content += f"currency {self.currency}\n"
+        # content += f"currency {self.currency}\n"
+        content += f"currency $\n"
+        content += f"date-format %Y-%m-%d\n"
 
         # Write status
         content += f"status {self.status}\n\n"

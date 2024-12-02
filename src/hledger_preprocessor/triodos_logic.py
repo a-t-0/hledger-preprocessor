@@ -15,14 +15,14 @@ class TriodosParserSettings:
         return [
             "nr_in_batch",
             "date",
-            "account0",
-            "amount0",
+            "account",
+            "amount",
             "transaction_code",
             "other_party",
-            "account1",
+            "account",
             "BIC",
             "description",
-            "balance0",
+            "balance",
         ]
 
     def uses_header(self) -> bool:
@@ -47,14 +47,14 @@ class TriodosTransaction:
         return {
             "nr_in_batch": self.nr_in_batch,
             "date": self.the_date.strftime("%Y-%m-%d"),
-            "account0": self.account0,
-            "amount0": self.amount0,
+            "account": self.account0,
+            "amount": self.amount0,
             "transaction_code": self.transaction_code,
             "other_party": self.other_party_name,
-            "account1": self.account1,
+            "account": self.account1,
             "BIC": self.BIC,
             "description": self.description,
-            "balance0": self.balance0,
+            "balance": self.balance0,
         }
 
     def get_year(self) -> int:
