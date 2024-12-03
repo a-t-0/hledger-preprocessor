@@ -116,6 +116,29 @@ Handwritten Documentation
    manual_documenation/your_manual_documentation_filename.md
    another_manual_documentation_filename.md
 ```
+## Ubuntu hledger-flow installation instructions
+Source: https://github.com/apauley/hledger-flow/blob/master/CONTRIBUTING.org#build-the-project
+This pip package is intended to be used by 
+[this fork](https://github.com/a-t-0/hledger-flow/) of the hledger-flow repository.
+
+0. Install [stack](https://docs.haskellstack.org/en/stable/): 
+```sh
+curl -sSL https://get.haskellstack.org/ | sh
+```
+1. Install prerequiesite package:
+```sh
+sudo apt-get install libgmp-dev
+```
+2. Build the repo with: 
+```sh
+stack test --interleaved-output --pedantic
+stack install
+```
+4. Add to path
+```sh
+echo 'export PATH=$PATH:/home/a/.local/bin' >> ~/.bashrc
+source ~/.bashrc
+```
 
 <!-- Un-wrapped URL's below (Mostly for Badges) -->
 
