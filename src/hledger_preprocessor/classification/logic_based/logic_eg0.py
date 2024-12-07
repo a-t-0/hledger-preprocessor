@@ -49,7 +49,7 @@ class ExampleLogicModel:
         if dict_contains_string(
             d=tnx_dict, substr="IKEA BV", case_sensitive=False
         ):
-            return "restitution:furniture:Ikea"
+            return "refund:furniture:Ikea"
         if (
             private_credit_classification(
                 transaction=transaction, tnx_dict=tnx_dict

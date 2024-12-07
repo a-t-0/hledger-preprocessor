@@ -25,7 +25,7 @@ class TriodosParserSettings:
             "other_account",
             "BIC",
             "description",
-            "balance",
+            "this_is_the_balance",
             "ai_classification",
             "logic_classification",
         ]
@@ -67,11 +67,12 @@ class TriodosTransaction:
 
         if self.logic_classification is not None:
             # TODO: determine how to collapse/select/choose the AI model that is exported.
-            base_dict["logic_classification"] = self.ai_classification[
+            base_dict["logic_classification"] = self.logic_classification[
                 "ExampleLogicModel"
             ]
         else:
             base_dict["logic_classification"] = None
+        return base_dict
 
     def to_dict_without_classification(
         self,
