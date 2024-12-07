@@ -8,6 +8,11 @@ from typing import Any, Dict, List
 from typeguard import typechecked
 
 from hledger_preprocessor.arg_parser import create_arg_parser, verify_args
+from hledger_preprocessor.classification.ai_based.ai_eg0 import ExampleAIModel
+from hledger_preprocessor.classification.classifier import classify_transactions
+from hledger_preprocessor.classification.logic_based.logic_eg0 import (
+    ExampleLogicModel,
+)
 from hledger_preprocessor.create_start import ask_user_for_starting_info
 from hledger_preprocessor.dir_reading_and_writing import (
     assert_dir_exists,
@@ -29,8 +34,16 @@ from hledger_preprocessor.triodos_logic import (
 
 @typechecked
 def write_processed_csv(
-    transactions: List[Transaction], file_name: str
+    transactions: List[Transaction],
+    file_name: str,
+    ai_models: List,
+    logic_models: List,
 ) -> None:
+    classified_transactions: List[Transaction] = classify_transactions(
+        transactions=transactions,
+        ai_models=ai_models,
+        logic_models=logic_models,
+    )
     # Get fieldnames dynamically from the first object in the list
     if transactions:
         fieldnames = transactions[0].to_dict().keys()
@@ -114,7 +127,9 @@ def sort_transactions_on_years(
 
 
 @typechecked
-def pre_process_csvs(*, args: Namespace) -> None:
+def pre_process_csvs(
+    *, args: Namespace, ai_models: List, logic_models: List
+) -> None:
     # Hardcoded parameters.
     csv_encoding: str = "utf-8"
 
@@ -144,7 +159,10 @@ def pre_process_csvs(*, args: Namespace) -> None:
             input_filename=os.path.basename(args.input_file),
         )
         write_processed_csv(
-            transactions=transactions, file_name=output_filepath
+            transactions=transactions,
+            file_name=output_filepath,
+            ai_models=ai_models,
+            logic_models=logic_models,
         )
 
 
@@ -191,6 +209,10 @@ def main() -> None:
     parser = create_arg_parser()
     args: Any = verify_args(parser=parser)
 
+    ai_model = ExampleAIModel()
+    logic_model = ExampleLogicModel()
+    ai_models: List = [ai_model]
+    logic_models: List = [logic_model]
     # TODO: determine which bank is used and get logic accordingly.
     if args.new:
         ask_user_for_starting_info(
@@ -204,4 +226,8 @@ def main() -> None:
     if args.generate_rules:
         generate_rules_file(args=args)
     if args.pre_processed_output_dir:
-        pre_process_csvs(args=args)
+        pre_process_csvs(
+            args=args,
+            ai_models=ai_models,
+            logic_models=logic_models,
+        )

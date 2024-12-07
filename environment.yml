@@ -62,6 +62,8 @@ dependencies:
 # Enable creating the pip package.
   - setuptools
   - wheel
+# For AI classifier
+  - scikit-learn
 # pip packages:
   - pip
   - pip:
@@ -75,3 +77,5 @@ dependencies:
     - myst_parser
     # Build the pip package.
     - build
+    # For AI classifier
+    - joblib

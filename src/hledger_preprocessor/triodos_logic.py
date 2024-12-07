@@ -3,7 +3,7 @@ hledger."""
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from typeguard import typechecked
 
@@ -48,6 +48,8 @@ class TriodosTransaction:
     BIC: str
     description: str
     balance0: float
+    ai_classification: Optional[Dict[str, str]] = None
+    logic_classification: Optional[Dict[str, str]] = None
 
     @typechecked
     def to_dict(self) -> Dict[str, Union[int, float, str, datetime]]:
@@ -66,6 +68,11 @@ class TriodosTransaction:
             "BIC": self.BIC,
             "description": self.description,
             "balance": self.balance0,
+            # TODO: determine how to collapse/select/choose the AI model that is exported.
+            "ai_classification": self.ai_classification["ExampleAIModel"],
+            "logic_classification": self.logic_classification[
+                "ExampleLogicModel"
+            ],
         }
 
     def get_year(self) -> int:
