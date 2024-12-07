@@ -64,6 +64,8 @@ dependencies:
   - wheel
 # For AI classifier
   - scikit-learn
+  - transformers # To run huggingface classifier locally.
+  - sympy # To run huggingface classifier locally.
 # pip packages:
   - pip
   - pip:
