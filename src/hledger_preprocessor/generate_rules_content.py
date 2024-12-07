@@ -48,13 +48,13 @@ class RulesContentCreator:
 
         content += """if %transaction_code Debet
  description %description
- account1 expenses
+ account1 expenses:%ai_classification
  account2 assets:%account_holder:%bank:%account_type
 # end\n\n"""
         content += """if %transaction_code Credit
  description %description
  account1 assets:%account_holder:%bank:%account_type
- account2 income
+ account2 income:%ai_classification
 #end\n\n"""
 
         return content

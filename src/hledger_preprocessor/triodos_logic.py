@@ -27,6 +27,8 @@ class TriodosParserSettings:
             "BIC",
             "description",
             "balance",
+            "ai_classification",
+            "logic_classification",
         ]
 
     def uses_header(self) -> bool:
