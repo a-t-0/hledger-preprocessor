@@ -31,30 +31,30 @@ class RulesContentCreator:
             content += "skip 0\n\n"
 
         # Write fields
-        # content += (
-        #     f"fields {', '.join(self.parserSettings.get_field_names())}\n\n"
-        # )
         content += (
-            # f"fields _, date, account0, amount0, _, _, _, _, description, balance0\n"
-            f"fields _, date, account, amount, _, _, _, _, description, balance\n"
+            f"fields {', '.join(self.parserSettings.get_field_names())}\n\n"
         )
 
         # Write currency
         # content += f"currency {self.currency}\n"
-        content += f"currency $\n"
+        content += f"currency EUR\n"
         content += f"date-format %Y-%m-%d\n"
 
         # Write status
         content += f"status {self.status}\n\n"
 
-        # Write account1 and description format
-        content += (
-            "account1"
-            " Assets:current:"
-            f"{self.account_holder}:{self.bank_name}:{self.account_type}\n"
-        )
-
         # TODO: include tag/category in this perhaps.
         # Original: description %desc1/%desc2/%desc3
-        content += "description %description"
+
+        content += """if %transaction_code Debet
+ description %description
+ account1 expenses
+ account2 assets:%account_holder:%bank:%account_type
+# end\n\n"""
+        content += """if %transaction_code Credit
+ description %description
+ account1 assets:%account_holder:%bank:%account_type
+ account2 income
+#end\n\n"""
+
         return content

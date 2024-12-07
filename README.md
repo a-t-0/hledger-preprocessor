@@ -116,29 +116,74 @@ Handwritten Documentation
    manual_documenation/your_manual_documentation_filename.md
    another_manual_documentation_filename.md
 ```
+
 ## Ubuntu hledger-flow installation instructions
+
 Source: https://github.com/apauley/hledger-flow/blob/master/CONTRIBUTING.org#build-the-project
-This pip package is intended to be used by 
+This pip package is intended to be used by
 [this fork](https://github.com/a-t-0/hledger-flow/) of the hledger-flow repository.
 
-0. Install [stack](https://docs.haskellstack.org/en/stable/): 
+0. Install [stack](https://docs.haskellstack.org/en/stable/):
+
 ```sh
 curl -sSL https://get.haskellstack.org/ | sh
 ```
+
 1. Install prerequiesite package:
+
 ```sh
 sudo apt-get install libgmp-dev
 ```
-2. Build the repo with: 
+
+2. Build the repo with:
+
 ```sh
 stack test --interleaved-output --pedantic
 stack install
 ```
+
 4. Add to path
+
 ```sh
 echo 'export PATH=$PATH:/home/a/.local/bin' >> ~/.bashrc
 source ~/.bashrc
 ```
+
+5. Create a starting directory with some `.csv` file you downloaded from your bank.
+
+```sh
+mkdir -p import/<account holder>/<bank>/<account type>/1-in/2024
+```
+
+This structure is hardcoded/required by `hledger-flow`
+e.g.
+
+```sh
+mkdir -p import/barry/revolut/checking/1-in/2025
+```
+
+6. Copy your `<bank transactions>.csv` into that directory like:
+
+```sh
+cp blockrise.csv import/alice/uniswap/crypto/1-in/filename_doesnt_matter.csv
+```
+
+7. Copy the `createRules` and `preprocess` script into the `<account type>` directory, and make them runnable:
+
+```sh
+cp createRules import/barry/revolut/checking/createRules
+chmod +x createRules
+cp preprocess import/barry/revolut/checking/preprocess
+chmod +x preprocess
+```
+
+8. Copy the `CONSTANTS.SH` file into the root of your finance repository:
+
+```sh
+cp CONSTANTS.sh /path_that_contains_the_import_dir/CONSTANTS.sh
+```
+
+9. Run the `hledger-flow import` command.
 
 <!-- Un-wrapped URL's below (Mostly for Badges) -->
 

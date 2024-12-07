@@ -48,5 +48,5 @@ def calculate_area(shape: Shape) -> float:
 circle = Circle(5)
 rectangle = Rectangle(2, 6)
 
-#print(calculate_area(circle))  # No error, structural typing matches.
-#print(calculate_area(rectangle))  # No error, structural typing matches.
+# print(calculate_area(circle))  # No error, structural typing matches.
+# print(calculate_area(rectangle))  # No error, structural typing matches.

@@ -3,11 +3,12 @@
 import csv
 import os
 from argparse import Namespace
-from typing import Dict, List
+from typing import Any, Dict, List
 
 from typeguard import typechecked
 
-from hledger_preprocessor.arg_parser import create_arg_parser
+from hledger_preprocessor.arg_parser import create_arg_parser, verify_args
+from hledger_preprocessor.create_start import ask_user_for_starting_info
 from hledger_preprocessor.dir_reading_and_writing import (
     assert_dir_exists,
     generate_output_path,
@@ -22,7 +23,7 @@ from hledger_preprocessor.generate_rules_content import RulesContentCreator
 from hledger_preprocessor.parser_logic_structure import Transaction
 from hledger_preprocessor.triodos_logic import (
     TriodosParserSettings,
-    parse_tridos_transaction,
+    parse_triodos_transaction,
 )
 
 
@@ -34,11 +35,14 @@ def write_processed_csv(
     if transactions:
         fieldnames = transactions[0].to_dict().keys()
         # TODO: change to ensure the fields are not sorted by the .keys() function.
-        print(f'fieldnames={fieldnames}')
+        # So that they preserve the same order.
+        print(f"fieldnames={fieldnames}")
 
         with open(file_name, mode="w", encoding="utf-8", newline="") as outfile:
             # writer = csv.writer(outfile)
-            writer = csv.DictWriter(outfile, fieldnames=fieldnames,quoting=csv.QUOTE_ALL)
+            writer = csv.DictWriter(
+                outfile, fieldnames=fieldnames, quoting=csv.QUOTE_ALL
+            )
             writer.writeheader()
 
             # Write each transaction as a row in the CSV
@@ -47,12 +51,23 @@ def write_processed_csv(
 
 
 @typechecked
-def process_transactions(rows: List[List[str]]) -> List[Transaction]:
+def process_transactions(
+    rows: List[List[str]],
+    account_holder: str,
+    bank: str,
+    account_type: str,
+) -> List[Transaction]:
     transactions: List[Transaction] = []
     for index, row in enumerate(
         reversed(rows), start=1
     ):  # Process rows from bottom to top
-        transaction = parse_tridos_transaction(row, index)
+        transaction = parse_triodos_transaction(
+            row,
+            index,
+            account_holder=account_holder,
+            bank=bank,
+            account_type=account_type,
+        )
         transactions.append(transaction)
     return transactions
 
@@ -60,6 +75,9 @@ def process_transactions(rows: List[List[str]]) -> List[Transaction]:
 @typechecked
 def parse_encoded_input_csv(
     input_csv_filepath: str,
+    account_holder: str,
+    bank: str,
+    account_type: str,
 ) -> List[Transaction]:
     updated_encoding = detect_file_encoding(input_csv_filepath)
     with open(
@@ -69,7 +87,12 @@ def parse_encoded_input_csv(
     ) as infile:
         reader = csv.reader(infile)
         rows = list(reader)
-    transactions = process_transactions(rows)
+    transactions = process_transactions(
+        rows,
+        account_holder=account_holder,
+        bank=bank,
+        account_type=account_type,
+    )
 
     return transactions
 
@@ -100,7 +123,10 @@ def pre_process_csvs(*, args: Namespace) -> None:
         input_csv_filepath=args.input_file, output_encoding=csv_encoding
     )
     total_transactions: List[Transaction] = parse_encoded_input_csv(
-        input_csv_filepath=args.input_file
+        input_csv_filepath=args.input_file,
+        account_holder=args.account_holder,
+        bank=args.bank,
+        account_type=args.account_type,
     )
     transactions_per_year: Dict[int, List[Transaction]] = (
         sort_transactions_on_years(transactions=total_transactions)
@@ -163,12 +189,18 @@ def main() -> None:
 
     # Parse input arguments
     parser = create_arg_parser()
-    args = parser.parse_args()
-
-    if not args.generate_rules and args.pre_processed_output_dir is None:
-        raise ValueError("Must either create rules or preprocess csvs.")
+    args: Any = verify_args(parser=parser)
 
     # TODO: determine which bank is used and get logic accordingly.
+    if args.new:
+        ask_user_for_starting_info(
+            root_finance_path=args.start_path,
+            account_holder=args.account_holder,
+            bank=args.bank,
+            account_type=args.account_type,
+            csv_filepath=args.csv_filepath,
+        )
+    # TODO: determine if elif is needed.
     if args.generate_rules:
         generate_rules_file(args=args)
     if args.pre_processed_output_dir:
