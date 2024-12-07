@@ -1,5 +1,4 @@
-from typing import Dict
-
+from hledger_preprocessor.classification.helper import dict_contains_string
 from hledger_preprocessor.classification.logic_based.private_logic import (
     private_credit_classification,
     private_debit_classification,
@@ -24,16 +23,23 @@ class ExampleLogicModel:
     def classify_debit(self, transaction: Transaction) -> str:
 
         tnx_dict = transaction.to_dict_without_classification()
-        if self.dict_contains_string(
+        if dict_contains_string(
             d=tnx_dict, substr="IKEA BV", case_sensitive=False
         ):
             return "house:furniture:Ikea"
-        if self.dict_contains_string(
+        if dict_contains_string(
             d=tnx_dict, substr="Eko Plaza", case_sensitive=False
         ):
             return "groceries:eko_plaza"
-        if private_debit_classification(transaction=transaction) is not None:
-            return private_debit_classification(transaction=transaction)
+        if (
+            private_debit_classification(
+                transaction=transaction, tnx_dict=tnx_dict
+            )
+            is not None
+        ):
+            return private_debit_classification(
+                transaction=transaction, tnx_dict=tnx_dict
+            )
         else:
             print("\n write a rule for expense:")
             input(transaction)
@@ -44,18 +50,15 @@ class ExampleLogicModel:
             d=tnx_dict, substr="IKEA BV", case_sensitive=False
         ):
             return "restitution:furniture:Ikea"
-        if private_credit_classification(transaction=transaction) is not None:
-            return private_credit_classification(transaction=transaction)
+        if (
+            private_credit_classification(
+                transaction=transaction, tnx_dict=tnx_dict
+            )
+            is not None
+        ):
+            return private_credit_classification(
+                transaction=transaction, tnx_dict=tnx_dict
+            )
         else:
             print("\n write a rule for income:")
             input(transaction)
-
-    def dict_contains_string(
-        self, d: Dict, substr: str, case_sensitive: bool
-    ) -> bool:
-        if case_sensitive:
-            return any(substr in str(value) for value in d.values())
-        else:
-            return any(
-                substr.lower() in str(value).lower() for value in d.values()
-            )

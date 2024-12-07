@@ -1,20 +1,8 @@
-from typing import List
-
-import pandas as pd
+from typing import Dict
 
 
-# Example function to convert a list of transactions to a DataFrame
-def transactions_to_dataframe(transactions: List[TriodosTransaction]):
-    data = pd.DataFrame(
-        [
-            {
-                "amount": txn.amount0,
-                "account": txn.account0,
-                "description": txn.description,
-                "ai_classification": txn.ai_classification,
-                "logic_classification": txn.logic_classification,
-            }
-            for txn in transactions
-        ]
-    )
-    return data
+def dict_contains_string(d: Dict, substr: str, case_sensitive: bool) -> bool:
+    if case_sensitive:
+        return any(substr in str(value) for value in d.values())
+    else:
+        return any(substr.lower() in str(value).lower() for value in d.values())
