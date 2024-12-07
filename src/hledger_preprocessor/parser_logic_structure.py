@@ -15,6 +15,10 @@ class ParserSettings(Protocol):
 class Transaction(Protocol):
     def to_dict(self) -> Dict[str, Union[int, float, str, datetime]]: ...
 
+    def to_dict_without_classification(
+        self,
+    ) -> Dict[str, Union[int, float, str, datetime]]: ...
+
     def get_year(self) -> int: ...
 
 

@@ -18,12 +18,11 @@ class TriodosParserSettings:
             "bank",
             "account_type",
             "date",
-            "some_account",
+            "account_owner",
             "amount",
             "transaction_code",
-            "category",
             "other_party",
-            "another_account",
+            "other_account",
             "BIC",
             "description",
             "balance",
@@ -55,26 +54,42 @@ class TriodosTransaction:
 
     @typechecked
     def to_dict(self) -> Dict[str, Union[int, float, str, datetime]]:
+        base_dict: Dict[str, Union[int, float, str, datetime]] = (
+            self.to_dict_without_classification()
+        )
+        if self.ai_classification is not None:
+            # TODO: determine how to collapse/select/choose the AI model that is exported.
+            base_dict["ai_classification"] = self.ai_classification[
+                "ExampleAIModel"
+            ]
+        else:
+            base_dict["ai_classification"] = None
+
+        if self.logic_classification is not None:
+            # TODO: determine how to collapse/select/choose the AI model that is exported.
+            base_dict["logic_classification"] = self.ai_classification[
+                "ExampleLogicModel"
+            ]
+        else:
+            base_dict["logic_classification"] = None
+
+    def to_dict_without_classification(
+        self,
+    ) -> Dict[str, Union[int, float, str, datetime]]:
         return {
             "nr_in_batch": self.nr_in_batch,
             "account_holder": self.account_holder,
             "bank": self.bank,
             "account_type": self.account_type,
             "date": self.the_date.strftime("%Y-%m-%d"),
-            "some_account": self.account0,
+            "account_owner": self.account0,
             "amount": self.amount0,
             "transaction_code": self.transaction_code,
-            "category": "assets:HELLO",
             "other_party": self.other_party_name,
-            "another_accont": self.account1,
+            "other_account": self.account1,
             "BIC": self.BIC,
             "description": self.description,
             "balance": self.balance0,
-            # TODO: determine how to collapse/select/choose the AI model that is exported.
-            "ai_classification": self.ai_classification["ExampleAIModel"],
-            "logic_classification": self.logic_classification[
-                "ExampleLogicModel"
-            ],
         }
 
     def get_year(self) -> int:

@@ -81,3 +81,5 @@ dependencies:
     - build
     # For AI classifier
     - joblib
+    # To run GPT4All locally.
+    - gpt4all

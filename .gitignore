@@ -1,5 +1,7 @@
 # This file lists which files are automatically excluded when you want to push
 
+*private_logic.py
+
 # something to Git(Hub/Lab) using the program GIT.
 docs/source/test/
 

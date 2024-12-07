@@ -10,24 +10,26 @@ def classify_transactions(
     for txn in transactions:
         for ai_model in ai_models:
             # AI-based classification (replace `ai_model.predict` with your actual model logic)
-            ai_classification = ai_model.predict(
-                {
-                    "amount": txn.amount0,
-                    "account": txn.account0,
-                    "description": txn.description,
-                }
-            )
-            txn.ai_classification = {ai_model.name: ai_classification}
+            # ai_classification = ai_model.predict(
+            #     {
+            #         "bank": txn.bank,
+            #         "account_type": txn.account_type,
+            #         "date": txn.the_date.strftime("%Y-%m-%d"),
+            #         "account_owner": txn.account0,
+            #         "amount": txn.amount0,
+            #         "transaction_code": txn.transaction_code,
+            #         "other_account": txn.account1,
+            #         "other_party": txn.other_party_name,
+            #         "BIC": txn.BIC,
+            #         "description": txn.description,
+            #     }
+            # )
+            # txn.ai_classification = {ai_model.name: ai_classification}
+            txn.ai_classification = {ai_model.name: "filler"}
 
-        # Logic-based classification (replace `logic_model.classify` with your actual logic logic)
         for logic_model in logic_models:
-            logic_classification = logic_model.classify(
-                {
-                    "amount": txn.amount0,
-                    "account": txn.account0,
-                    "description": txn.description,
-                }
-            )
+
+            logic_classification = logic_model.classify(transaction=txn)
             txn.logic_classification = {logic_model.name: logic_classification}
 
     return transactions
