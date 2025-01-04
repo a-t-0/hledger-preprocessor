@@ -41,6 +41,7 @@ def assert_file_exists(file_path: str) -> None:
         raise FileNotFoundError(f"File '{file_path}' does not exist.")
 
 
+@typechecked
 def ask_user_for_starting_info(
     *,
     root_finance_path: str,
@@ -48,7 +49,7 @@ def ask_user_for_starting_info(
     bank: str,
     account_type: str,
     csv_filepath: str,
-) -> Tuple[str, str, str, str, str]:
+) -> None:
     """Prompts the user for necessary information to set up the import
     directory structure.
 
@@ -77,8 +78,6 @@ def ask_user_for_starting_info(
         path_to_account_type=f"{current_year_path}",
         source_script_path=csv_filepath,
     )
-
-    return root_finance_path, account_holder, bank, account_type
 
 
 @typechecked

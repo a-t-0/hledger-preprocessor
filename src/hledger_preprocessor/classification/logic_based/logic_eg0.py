@@ -41,7 +41,7 @@ class ExampleLogicModel:
                 transaction=transaction, tnx_dict=tnx_dict
             )
         else:
-            print("\n write a rule for expense:")
+            print("\n Please add a rule for expense (and run again):")
             input(transaction)
 
     def classify_credit(self, transaction: Transaction) -> str:
@@ -60,5 +60,5 @@ class ExampleLogicModel:
                 transaction=transaction, tnx_dict=tnx_dict
             )
         else:
-            print("\n write a rule for income:")
+            print("\n Please add a rule for income (and run again):")
             input(transaction)

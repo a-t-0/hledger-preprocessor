@@ -95,11 +95,10 @@ def verify_args(*, parser: ArgumentParser) -> Any:
                 "Must either create rules, preprocess csv's or start a new"
                 " hledger-flow import setup."
             )
-    if not args.new and args.csv_filepath or not args.new and args.csv_filepath:
-        parser.error(
-            "If you start, the --csv-filepath and the --new arg flags must be"
-            " used."
-        )
+    if args.new and not args.csv_filepath:
+        parser.error("If you use --new, include --csv-filepath.")
+    if not args.new and args.csv_filepath:
+        parser.error("If you use --csv-filepath, include --new.")
 
     assert_has_only_valid_chars(input_string=args.account_holder)
     assert_has_only_valid_chars(input_string=args.bank)
