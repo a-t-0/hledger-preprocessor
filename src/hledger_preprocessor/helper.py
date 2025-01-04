@@ -1,5 +1,6 @@
 """Contains uncategorised helper functions."""
 
+from argparse import Namespace
 from datetime import datetime
 
 from typeguard import typechecked
@@ -24,3 +25,14 @@ def format_date_to_iso(
     output_format: str = "%Y-%m-%d",
 ) -> str:
     return datetime.strptime(date_string, input_format).strftime(output_format)
+
+
+@typechecked
+def assert_bank_to_account_args_are_valid(*, args: Namespace) -> None:
+    if args.bank is None or args.bank == "":
+        raise ValueError("Must specify bank.")
+    if args.account_holder is None or args.account_holder == "":
+        raise ValueError("Must specify account_holder.")
+
+    if args.account_type is None or args.account_type == "":
+        raise ValueError("Must specify account_type.")

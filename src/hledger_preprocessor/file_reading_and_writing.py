@@ -29,6 +29,7 @@ def detect_file_encoding(file_path: str) -> str:
 def convert_input_csv_encoding(
     input_csv_filepath: str, output_encoding: str
 ) -> None:
+
     detected_encoding = detect_file_encoding(input_csv_filepath)
     # Read the file with the detected encoding and save it as UTF-8
     with open(

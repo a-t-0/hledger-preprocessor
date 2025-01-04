@@ -16,6 +16,7 @@ from hledger_preprocessor.classification.logic_based.logic_eg0 import (
 from hledger_preprocessor.create_start import ask_user_for_starting_info
 from hledger_preprocessor.dir_reading_and_writing import (
     assert_dir_exists,
+    assert_dir_hierarchy_exists,
     generate_output_path,
 )
 from hledger_preprocessor.file_reading_and_writing import (
@@ -168,14 +169,6 @@ def pre_process_csvs(
 
 @typechecked
 def generate_rules_file(*, args: Namespace) -> None:
-    if args.bank is None or args.bank == "":
-        raise ValueError("Must specify bank.")
-    if args.account_holder is None or args.account_holder == "":
-        raise ValueError("Must specify account_holder.")
-
-    if args.account_type is None or args.account_type == "":
-        raise ValueError("Must specify account_type.")
-
     # Generate rules file.
     triodosParserSettings: TriodosParserSettings = TriodosParserSettings()
     triodosRules: RulesContentCreator = RulesContentCreator(
@@ -191,9 +184,11 @@ def generate_rules_file(*, args: Namespace) -> None:
         f"{args.start_path}/import/{args.account_holder}/{args.bank}/"
         + f"{args.account_type}"
     )
-    rules_filepath = f"{rules_output_dir}/{args.bank}-{args.account_type}.rules"
-
     assert_dir_exists(dirpath=rules_output_dir)
+
+    account_type_path: str = assert_dir_hierarchy_exists(args=args)
+    rules_filename: str = f"{args.bank}-{args.account_type}.rules"
+    rules_filepath = f"{account_type_path}/{rules_filename}"
 
     write_to_file(
         content=triodosRules.create_rulecontent(),
@@ -224,8 +219,10 @@ def main() -> None:
         )
     # TODO: determine if elif is needed.
     if args.generate_rules:
+        assert_dir_hierarchy_exists(args=args)
         generate_rules_file(args=args)
     if args.pre_processed_output_dir:
+        assert_dir_hierarchy_exists(args=args)
         pre_process_csvs(
             args=args,
             ai_models=ai_models,

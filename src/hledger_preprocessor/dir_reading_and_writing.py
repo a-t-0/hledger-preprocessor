@@ -1,8 +1,36 @@
 """Handles directory reading and writing."""
 
 import os
+from argparse import Namespace
 
 from typeguard import typechecked
+
+from hledger_preprocessor.helper import assert_bank_to_account_args_are_valid
+
+
+@typechecked
+def assert_dir_hierarchy_exists(*, args: Namespace) -> str:
+
+    # First verify the input arguments are valid.
+    assert_bank_to_account_args_are_valid(args=args)
+
+    start_path: str = args.start_path
+    import_path: str = f"{start_path}/import"
+    account_holder_path: str = f"{import_path}/{args.account_holder}"
+    bank_path: str = f"{account_holder_path}/{args.bank}"
+
+    # Deliberately verbose for readability.
+    account_type_path: str = (
+        f"{args.start_path}/import/{args.account_holder}/{args.bank}/"
+        + f"{args.account_type}"
+    )
+
+    assert_dir_exists(dirpath=start_path)
+    assert_dir_exists(dirpath=import_path)
+    assert_dir_exists(dirpath=account_holder_path)
+    assert_dir_exists(dirpath=bank_path)
+    assert_dir_exists(dirpath=account_type_path)
+    return account_type_path
 
 
 @typechecked
